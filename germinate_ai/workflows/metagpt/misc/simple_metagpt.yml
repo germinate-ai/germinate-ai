@@ -1,0 +1,44 @@
+
+# phase - sequential
+# stages - HSM
+# tasks - DAG
+# schedule a workflow
+# a) starts with phase 0
+#   a.1) starting stage
+#   a.2) enqueue toposorted generations
+#     a.2.I) coordinator task tracker listens for completions
+#     a.2.II) on completion, updates states, when all complete, next generation
+#   a.3) when stage completed, run transition agent
+#     a.3.I) Yes -> transition to next stage,
+#     a.3.II) No -> redo (?), abandon for human feedback etc
+# b)... repeat for each phase  
+
+
+# TRANSITION!!
+
+# LLM
+# Choose LLM
+# Code/key -> llm initializer - like Ollama
+# - Must build/mount config for ^^ (API Key, Ollama server IP) to workers
+
+
+workflows:
+  metagpt:
+    phases:
+      define:
+        starting_step: planning
+        final_step: planning
+        steps:
+          planning:
+            executor: simple_agent
+            agent: product_manager_agent
+      design:
+        starting_step: system_design
+        final_step: design_review
+        steps:
+          - name: system_design
+            executor: simple_agent
+            agent: system_architect_agent
+          - name: project_management
+            executor: simple_agent
+            agent: project_manager_agent

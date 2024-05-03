@@ -1,0 +1,53 @@
+site_name: GerminateAI
+site_url: https://germinate-ai.github.io
+
+theme:
+    name: material
+    favicon: img/favicon.ico
+
+plugins: 
+  - search
+  - mkdocstrings
+
+
+nav:
+    - Home: index.md
+    - Quickstart: quickstart.md
+    - Main Ideas: main-ideas.md
+    # - User Guide:
+    #     - "Getting Started": getting-started.md
+    #     - "Configuration": configuration.md
+    #     - "Create a New Workflow": create-a-new-workflow.md
+    #     - "Create Tasks DAGs": states-tasks-dags.md
+    #     - "Specifying State Transitions": specifying-state-transitions.md
+    #     - "Custom Tasks": custom-tasks.md
+    #     - "Run the Workflow": run-workflow.md
+    - Reference:
+        # - Config: reference/config.md
+        - Coordinator: reference/coordinator.md
+        - Core:
+            - "Loaders": reference/core/loader.md
+            - "Workflows": reference/core/workflows.md
+            - "States": reference/core/states.md
+            - "Tasks": reference/core/tasks.md
+            - "Misc": reference/core/misc.md
+        - Data:
+            - "Database": reference/data/database.md
+            - "Models": reference/data/models.md
+            - "Repositories": reference/data/repositories.md
+            - "Schemas": reference/data/schemas.md
+        - Memory: reference/memory.md
+        - Message Bus: reference/message-bus.md
+        - Worker: reference/worker.md
+        - Utils: reference/utils.md
+
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+

@@ -1,0 +1,45 @@
+workflow:
+  name: simple_metagpt
+  stages:
+    - name: define
+      tasks:
+        - name: planning
+          executor: agent.product_manager
+          input: prompt
+          output: requirement_document
+    - name: design
+      tasks:
+        - name: system_design
+          executor: agent.architect
+          input: requirement_document
+          output: system_design_document
+        - name: project_management
+          executor: agent.project_manager
+          input: system_design_document
+          output: tasks_specification
+    - name: code
+      tasks:
+        - name: coding
+          executor: agent.coder
+          input:
+            - requirement_document
+            - system_design_document
+            - tasks_specification
+          output: code
+        - name: code_execution
+          executor: custom.code_executor
+          input: code
+          output: execution_output
+    - name: test
+      tasks:
+      - name: write_unit_tests
+        executor: agent.qa_engineer
+        input:
+          - code
+        output: unit_tests
+      - name: run_unit_tests
+        executor: custom.unit_test_runner
+        input:
+          - code
+          - unit_tests
+        output: run_unit_tests_output

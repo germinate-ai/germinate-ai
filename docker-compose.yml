@@ -1,0 +1,89 @@
+# Development
+# ============
+
+services:
+  # Persistence
+  postgres:
+    image: "postgres:16-bookworm"
+    deploy:
+      resources:
+        limits:
+          cpus: "${DOCKER_POSTGRES_CPUS:-0}"
+          memory: "${DOCKER_POSTGRES_MEMORY:-0}"
+    ports:
+      - "5432:5432"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    stop_grace_period: "3s"
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-germinate}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-password123}"
+      POSTGRES_DB: "${POSTGRES_DB:-germinate}"
+    profiles: ["dev", "postgres"]
+    volumes:
+      - "postgres:/var/lib/postgresql/data"
+      # - "./postgres/initdb.d/:/docker-entrypoint-initdb.d"
+
+  # Vector DB
+  weaviate:
+    image: "cr.weaviate.io/semitechnologies/weaviate:1.24.8"
+    command: ["--host", "0.0.0.0", "--port", "8080", "--scheme", "http"]
+    deploy:
+      resources:
+        limits:
+          cpus: "${DOCKER_WEAVIATE_CPUS:-0}"
+          memory: "${DOCKER_WEAVIATE_MEMORY:-0}"
+    ports:
+      - "50080:8080"
+      - "50051:50051"
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    stop_grace_period: "3s"
+    profiles: ["dev", "weaviate"]
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+      PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
+      DEFAULT_VECTORIZER_MODULE: "none"
+      # Comment to disable modules & provide your own vectors!
+      # ENABLE_MODULES: "text2vec-cohere,text2vec-huggingface,text2vec-palm,text2vec-openai,generative-openai,generative-cohere,generative-palm,ref2vec-centroid,reranker-cohere,qna-openai"
+      CLUSTER_HOSTNAME: "node1"
+      # speed up imports
+      ASYNC_INDEXING: "true"
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+
+  # NATS cluster - Messaging
+  # - https://docs.nats.io/running-a-nats-service/nats_docker/nats-docker-tutorial
+  # - https://docs.nats.io/running-a-nats-service/nats_docker
+  nats:
+    image: nats:latest
+    ports:
+      # clients
+      - "4222:4222"
+      # information report HTTP
+      - "8222:8222"
+      # cluster routing
+      # - "6222:6222"
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --http_port 8222 "
+    networks:
+      - nats
+    profiles: ["dev", "nats"]
+
+  nats-1:
+    image: nats:latest
+    ports:
+      # clients
+      - "4223:4222"
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+    networks:
+      - nats
+    depends_on:
+      - nats
+    profiles: ["dev", "nats"]
+
+volumes:
+  postgres:
+  weaviate_data:
+
+networks:
+  nats:
+    name: nats
