@@ -2,7 +2,7 @@ Germinate AI
 =============
 
 
-Please view the GerminateAI docs: [https://germinate-ai.github.io](https://germinate-ai.github.io)
+Please view the GerminateAI docs: [https://germinate-ai.github.io/germinate-ai/](https://germinate-ai.github.io/germinate-ai/)
 
 ## Project Structure
 
@@ -39,4 +39,13 @@ Please view the GerminateAI docs: [https://germinate-ai.github.io](https://germi
 
 Preset workflows are temporarily stored in `./germinate_ai/workflows`. This is a temporary until implementation of Docker image builds and the sending pickled task executor functions over the wire.
 
-### (Simple) MetaGPT
+### MetaGPT-ish (WIP)
+
+WIP
+
+Design state:
+Product Manager Task - Writes a simple PRD Document
+System Architect Task - Writes a simple System Design Document
+
+Coding state:
+Engineer Task - Writes python code in a single generation using only a simple Langchain prompt chain.
